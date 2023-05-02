@@ -1,0 +1,10 @@
+{
+    "java.debug.settings.showStaticVariables": true,
+    "java.debug.settings.hotCodeReplace":"manual",
+    "java.debug.logLevel":"verbose",
+    "java.debug.settings.console":"integratedTerminal",
+    //"java.debug.settings.vmArgs": ""
+
+    
+    // Increase the heap 
+}

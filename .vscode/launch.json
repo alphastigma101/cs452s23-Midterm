@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Lox",
+            "request": "launch",
+            "mainClass": "edu.sou.cs452.jlox.Lox",
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
+            // In order to avoid stepping into other methods or functions that come with the program language line 15 to 22 do the job
+            "stepFilters": {
+                "skipClasses": [
+                    "$JDK",
+                    "junit.*"
+                ],
+                "skipSynthetics": false,
+                "skipStaticInitializers": false,
+                "skipConstructors": false
+            },
+            "args": "-Xaggressive -Xenableexplicitgc -Xtrace -Xtune:virtualized",
+            // http://setgetweb.com/p/java7/diag/appendixes/cmdline/commands_jvm.html <- You can get a lot more arguments which are passed into here 
+            "projectName": "jlox"
+        },
+        {
+            "type": "java",
+            "name": "GenerateAst",
+            "request": "launch",
+            "mainClass": "edu.sou.cs452.jlox.GenerateAst",
+            "cwd": "${workspaceFolder}",
+            "args": "",
+            "projectName": "jlox",
+            "stopOnEntry": false
+        }
+    ]
+}
