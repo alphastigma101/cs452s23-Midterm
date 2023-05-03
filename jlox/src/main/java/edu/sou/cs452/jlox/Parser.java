@@ -11,38 +11,123 @@ class Parser {
      * @return None
     */
     Parser(List<Token> tokens) { this.tokens = tokens; }
-    Expr parse() {
-        try { return expression(); } 
-        catch (ParseError error) { return null; }
+
+    List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()) { statements.add(declaration()); }
+        return statements; 
     }
     /** 
-     * This function expression()...
-     * @param types is a enum type of TokenTypes
-     * @param message is a String type. Capitalization String is a wrapper for the object that is declared with 
-     * @return Returns a new instance of a subclass such as Binary and Grouping. When it creates a new instance, it saves the values that were assigned to it
+     * @param None
+     * @return equality()
     */
     private Expr expression() {
-        // Whenever you recrusive call it, it changes to the next token in the list
-        if (match(LEFT_PAREN,RIGHT_PAREN)) {
-            Expr expr = expression();
-            if (match(RIGHT_PAREN)) { 
-                advance();
-                return pair(expr); 
-            }
-            else if (match(MINUS, PLUS, STAR, SLASH)) {
-                Token operator = previous();
-                Expr right = expression();
-                if (previous() == tokens.get(current - 1)) {
-                    // This statement gets the inner
-                    pair(expr);
-                    return new Expr.Binary(expr, operator, right);
-                }
-                else { consume(RIGHT_PAREN, "Expexted a ) at the end of the expression"); }
-                throw error(peek(), "Expect a binary operation such as +, -, *, /");
-            } 
+        return assignment();
+    }
+    private Stmt declaration() {
+        try {
+            if (match(VAR)) return varDeclaration();
+    
+            return statement();
         } 
-        else if (match(NUMBER)) { return new Expr.Literal(previous().literal); }
-        throw error(peek(), "Expect an expression."); 
+        catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+    private Stmt statement() {
+        if (match(TokenType.PRINT)) return printStatement();
+    
+        return expressionStatement();
+    }
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Expression(expr);
+    }
+    private Expr assignment() {
+        Expr expr = equality();
+    
+        if (match(TokenType.EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment();
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable)expr).name;
+                return new Expr.Assign(name, value);
+            } 
+            error(equals, "Invalid assignment target."); 
+        }
+    
+        return expr;
+    }
+    /** 
+     * @param None
+     * @return equality()
+    */
+    private Expr equality() {
+        Expr expr = comparison();
+        while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
+            Token operator = previous();
+            Expr right = comparison();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    /** 
+     * @param None
+     * @return equality()
+    */
+    private Expr comparison() {
+        Expr expr = term();
+    
+        while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
+            Token operator = previous();
+            Expr right = term();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    private Expr term() {
+        Expr expr = factor();
+        while (match(TokenType.MINUS, TokenType.PLUS)) {
+            Token operator = previous();
+            Expr right = factor();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    private Expr factor() {
+        Expr expr = unary();
+        while (match(TokenType.SLASH, TokenType.STAR)) {
+            Token operator = previous();
+            Expr right = unary();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+    private Expr unary() {
+        if (match(TokenType.BANG, TokenType.MINUS)) {
+            Token operator = previous();
+            Expr right = unary();
+            return new Expr.Unary(operator, right);
+        }
+        return primary();
+    }
+    private Expr primary() {
+        if (match(TokenType.FALSE)) return new Expr.Literal(false);
+        if (match(TokenType.TRUE)) return new Expr.Literal(true);
+        if (match(TokenType.NIL)) return new Expr.Literal(null);
+        if (match(TokenType.NUMBER, TokenType.STRING)) { return new Expr.Literal(previous().literal); }
+        if (match(TokenType.LEFT_PAREN)) {
+            Expr expr = expression();
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
+            return new Expr.Grouping(expr);
+        }
     }
     /** 
      * This function pair() returns a new instance of grouping which saves the values that were assigned to it 

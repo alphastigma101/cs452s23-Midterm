@@ -1,17 +1,18 @@
 package edu.sou.cs452.jlox;
-
-class Interpreter implements Expr.Visitor<Object> {
+import java.util.List;
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    private Environment environment = new Environment();
     /** 
      * ...
-     * @param expression is Expr type
+     * @param expression is List type
      * @return None
     */
-    void interpret(Expr expression) { 
+    void interpret(List<Stmt> statements) {
         try {
-          Object value = evaluate(expression);
-          System.out.println(stringify(value));
-        } 
-        catch (RuntimeError error) { Lox.runtimeError(error); }
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } catch (RuntimeError error) { Lox.runtimeError(error); }
     }
     /** 
      * .....
@@ -33,6 +34,41 @@ class Interpreter implements Expr.Visitor<Object> {
      * @return expr.accecpt(this)
     */
     private Object evaluate(Expr expr) { return expr.accept(this); }
+    /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
+    private void execute(Stmt stmt) { stmt.accept(this); }
+    /** 
+     * @param stmt is a Stmt.Expression type 
+     * @return Returns null iif... 
+    */
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+      evaluate(stmt.expression);
+      return null;
+    }
+    /** 
+     * @param stmt is a Stmt.Print type 
+     * @return Returns null iif....
+    */
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+    /** 
+     * @param stmt is a Stmt.Print type 
+     * @return Returns null iif....
+    */
+    @Override
+    public Object visitAssignExpr(Expr.Assign expr) {
+        Object value = evaluate(expr.value);
+        environment.assign(expr.name, value);
+        return value;
+    }
+    
     /** 
      * @param Expr.Binary 
      * @return null if it is not reachable 
@@ -74,6 +110,12 @@ class Interpreter implements Expr.Visitor<Object> {
         }
         return null;
     }
+    /** 
+     * @param Expr.Binary 
+     * @return null if it is not reachable 
+    */
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) { return environment.get(expr.name); }
     /** 
      * @param object is a Object Type
      * @return return false if object is null otherwise, cast object into a boolean and return true
