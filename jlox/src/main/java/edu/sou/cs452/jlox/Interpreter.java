@@ -1,10 +1,13 @@
 package edu.sou.cs452.jlox;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     final Environment globals = new Environment();
     private Environment environment = globals;
-    
+    private final Map<Expr, Integer> locals = new HashMap<>();
+
     Interpreter() {
         globals.define("clock", new LoxCallable() {
           @Override
@@ -78,6 +81,20 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       executeBlock(stmt.statements, new Environment(environment));
       return null;
     }
+    @Override
+    public Void visitClassStmt(Stmt.Class stmt) {
+        environment.define(stmt.name.lexeme, null);
+        Map<String, LoxFunction> methods = new HashMap<>();
+        for (Stmt.Function method : stmt.methods) {
+            
+            LoxFunction function = new LoxFunction(method, environment,
+            method.name.lexeme.equals("init"));
+            methods.put(method.name.lexeme, function);
+        }
+        LoxClass klass = new LoxClass(stmt.name.lexeme, methods);
+        environment.assign(stmt.name, klass);
+        return null;
+    }
     /** 
      * @param stmt is a Stmt.Expression type 
      * @return Returns null iif... 
@@ -86,6 +103,15 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Void visitExpressionStmt(Stmt.Expression stmt) {
       evaluate(stmt.expression);
       return null;
+    }
+    @Override
+    public Void visitFunctionStmt(Stmt.Function stmt) {
+
+        
+        LoxFunction function = new LoxFunction(stmt, environment,
+                                           false);
+        environment.define(stmt.name.lexeme, function);
+        return null;
     }
     /** 
      * @param stmt is a Stmt.Expression type 
@@ -111,8 +137,18 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return null;
     }
     @Override
+    public Void visitReturnStmt(Stmt.Return stmt) {
+        Object value = null;
+        if (stmt.value != null) value = evaluate(stmt.value);
+
+        throw new Return(value);
+    }
+    @Override
     public Object visitAssignExpr(Expr.Assign expr) {
         Object value = evaluate(expr.value);
+        Integer distance = locals.get(expr);
+        if (distance != null) { environment.assignAt(distance, expr.name, value); } 
+        else { globals.assign(expr.name, value); }
         environment.assign(expr.name, value);
         return value;
     }
@@ -202,7 +238,15 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
      * @return null if it is not reachable 
     */
     @Override
-    public Object visitVariableExpr(Expr.Variable expr) { return environment.get(expr.name); }
+    public Object visitVariableExpr(Expr.Variable expr) { 
+        return lookUpVariable(expr.name, expr);
+        //return environment.get(expr.name); 
+    }
+    private Object lookUpVariable(Token name, Expr expr) {
+        Integer distance = locals.get(expr);
+        if (distance != null) { return environment.getAt(distance, name.lexeme); } 
+        else { return globals.get(name); }
+    }
     /** 
      * @param object is a Object Type
      * @return return false if object is null otherwise, cast object into a boolean and return true
@@ -277,5 +321,22 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   
         return evaluate(expr.right);
     }
+    @Override
+    public Object visitSetExpr(Expr.Set expr) {
+      Object object = evaluate(expr.object);
+  
+      if (!(object instanceof LoxInstance)) { 
+        throw new RuntimeError(expr.name,
+                               "Only instances have fields.");
+      }
+      
+      Object value = evaluate(expr.value);
+      ((LoxInstance)object).set(expr.name, value);
+      return value;
+    }
+    @Override
+  public Object visitThisExpr(Expr.This expr) {
+    return lookUpVariable(expr.keyword, expr);
+  }
 
 }
