@@ -20,17 +20,15 @@ class Scanner {
             case ')': addToken(RIGHT_PAREN); break;
             case '{': addToken(LEFT_BRACE); break;
             case '}': addToken(RIGHT_BRACE); break;
+            case ']': addToken(RIGHT_BRACKET); break;
+            case '[': addToken(LEFT_BRACKET); break;
             case ',': addToken(COMMA); break;
             case '.': addToken(DOT); break;
-            case '-': 
-                addToken(MINUS);  break;
-            case '+': 
-                addToken(PLUS); break;
-            case '/': 
-                addToken(SLASH); break;
+            case '-':  addToken(MINUS);  break;
+            case '+':  addToken(PLUS); break;
+            case '/':  addToken(SLASH); break;
             case ';': addToken(SEMICOLON); break;
-            case '*': 
-                addToken(STAR); break; 
+            case '*':  addToken(STAR); break; 
             case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
             case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
             case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
@@ -40,8 +38,7 @@ class Scanner {
                 break;
             case ' ':
             case '\r':
-            case '\t':
-                source.replace(" ", ""); // remove whitespace
+            case '\t': source.replace(" ", ""); // remove whitespace
               break;
             case '\n':
               line++;
@@ -62,41 +59,40 @@ class Scanner {
         if (isAtEnd()) return '\0';
         return source.charAt(current);
     }
-    private char previous() { return source.charAt(current - 1); }
     /**
      * This function number() Checks to see if the numbers are either negative or positive and will assign a abstractvalue to it
      * @param None
      * @return None 
     */
     private void number() {
-        // add code to check to see if the number is positive 
-        if  (previous() != '-') {
-            // if the binary operator is not - such as +,-,*, and / then this code will get execute
-            if (previous() == '0' && (peek() != ' ')) {
-                addToken(NUMBER, AbstractValue.ZERO);
-            }
-            else if (isDigit(previous())) {
-                if (isDigit(peek())) {
-                    addToken(NUMBER, AbstractValue.POSITIVE); 
-                    advance();
-                }
-                else { addToken(NUMBER, AbstractValue.POSITIVE); }
-            }
+        while (isDigit(peek())) advance();
+        // Look for a fractional part.
+        if (peek() == '.' && isDigit(peekNext())) {
+          // Consume the "."
+          advance();
+    
+          while (isDigit(peek())) advance();
         }
-        else if (previous() == '-' && isDigit(peek())) {
-            // check to see if the number is negative 
-            if (previous() == '0' && (peekNext() != ' ')) {
-                addToken(NUMBER, AbstractValue.NEGATIVE); 
-                addToken(null, AbstractValue.ZERO);
-            }
-            else if (isDigit(previous())) {
-                if (isDigit(peek())) { 
-                    addToken(NUMBER, AbstractValue.NEGATIVE); 
-                    advance();
-                }
-                else { addToken(NUMBER, AbstractValue.NEGATIVE); }
-            }
+        // Create varaible value that parses doubles and place it into addToken
+        //addToken(NUMBER, value);
+    }
+    private void string() {
+        while (peek() != '"' && !isAtEnd()) {
+          if (peek() == '\n') line++;
+          advance();
         }
+    
+        if (isAtEnd()) {
+          Lox.error(line, "Unterminated string.");
+          return;
+        }
+    
+        // The closing ".
+        advance();
+    
+        // Trim the surrounding quotes.
+        String value = source.substring(start + 1, current - 1);
+        addToken(STRING, value);
     }
     /**
      * This function peekNext() it peeks at the next character

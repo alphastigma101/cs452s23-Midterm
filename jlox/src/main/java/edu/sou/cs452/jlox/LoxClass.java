@@ -4,24 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 class LoxClass implements LoxCallable  {
-    private final Map<String, LoxFunction> methods;
+  private final Map<String, LoxFunction> methods;
 
-    LoxClass(String name, Map<String, LoxFunction> methods) {
-      this.name = name;
-      this.methods = methods;
-    }
-    LoxFunction findMethod(String name) {
-        if (methods.containsKey(name)) {
-          return methods.get(name);
-        }
-    
-        return null;
-      }
-
-  @Override
-  public String toString() {
-    return name;
+  LoxClass(String name, Map<String, LoxFunction> methods) {
+    this.name = name;
+    this.methods = methods;
   }
+  LoxFunction findMethod(String name) {
+    if (methods.containsKey(name)) { return methods.get(name); }
+    return null;
+  }
+  @Override
+  public String toString() { return name; }
   @Override
   public Object call(Interpreter interpreter, List<Object> arguments) {
     LoxFunction initializer = findMethod("init");
@@ -31,7 +25,6 @@ class LoxClass implements LoxCallable  {
     LoxInstance instance = new LoxInstance(this);
     return instance;
   }
-
   @Override
   public int arity() {
     LoxFunction initializer = findMethod("init");

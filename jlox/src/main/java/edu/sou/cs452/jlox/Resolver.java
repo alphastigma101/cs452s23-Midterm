@@ -20,9 +20,8 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private enum ClassType {
         NONE,
         CLASS
-      }
-    
-      private ClassType currentClass = ClassType.NONE;
+    }
+    private ClassType currentClass = ClassType.NONE;
     void resolve(List<Stmt> statements) {
         for (Stmt statement : statements) {
           resolve(statement);
@@ -54,7 +53,6 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         endScope();
         return null;
     }
-
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         resolve(stmt.expression);
@@ -85,10 +83,8 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         if (currentFunction == FunctionType.NONE) { Lox.error(stmt.keyword, "Can't return from top-level code."); }
         if (stmt.value != null) { resolve(stmt.value); }
         if (currentFunction == FunctionType.INITIALIZER) {
-            Lox.error(stmt.keyword,
-                "Can't return a value from an initializer.");
-          }
-
+            Lox.error(stmt.keyword,"Can't return a value from an initializer.");
+        }
         return null;
     }
     @Override
@@ -119,36 +115,28 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitCallExpr(Expr.Call expr) {
         resolve(expr.callee);
-
         for (Expr argument : expr.arguments) { resolve(argument); }
-
         return null;
     }
     @Override
-  public Void visitGetExpr(Expr.Get expr) {
-    resolve(expr.object);
-    return null;
-  }
-  @Override
-  public Object visitGetExpr(Expr.Get expr) {
-    Object object = evaluate(expr.object);
-    if (object instanceof LoxInstance) {
-      return ((LoxInstance) object).get(expr.name);
+    public Void visitGetExpr(Expr.Get expr) {
+        resolve(expr.object);
+        return null;
     }
-
-    throw new RuntimeError(expr.name,
-        "Only instances have properties.");
-  }
-
+    @Override
+    public Void visitLoxListExpr(Expr.LoxList expr) {
+        for (Expr element : expr.elements) {
+            resolve(element);
+        }
+        return null;
+    }
     @Override
     public Void visitGroupingExpr(Expr.Grouping expr) {
       resolve(expr.expression);
       return null;
     }
     @Override
-    public Void visitLiteralExpr(Expr.Literal expr) {
-      return null;
-    }
+    public Void visitLiteralExpr(Expr.Literal expr) { return null; }
     @Override
     public Void visitLogicalExpr(Expr.Logical expr) {
         resolve(expr.left);
@@ -164,8 +152,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitThisExpr(Expr.This expr) {
         if (currentClass == ClassType.NONE) {
-            Lox.error(expr.keyword,
-                "Can't use 'this' outside of a class.");
+            Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
             return null;
         }
         resolveLocal(expr, expr.keyword);
@@ -183,8 +170,13 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         if (!scopes.isEmpty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE) { 
             Lox.error(expr.name, "Can't read local variable in its own initializer."); 
         }
-
         resolveLocal(expr, expr.name);
+        return null;
+    }
+    @Override
+    public Void visitListGetExpr(Expr.ListGet expr) {
+        resolve(expr.identifier);
+        resolve(expr.identifier);
         return null;
     }
     private void resolve(Stmt stmt) { stmt.accept(this); }
@@ -200,13 +192,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         endScope();
         currentFunction = enclosingFunction;
     }
-    
     private void resolve(Expr expr) { expr.accept(this); }
     private void beginScope() { scopes.push(new HashMap<String, Boolean>()); }
     private void endScope() { scopes.pop(); }
     private void declare(Token name) {
         if (scopes.isEmpty()) return;
-    
         Map<String, Boolean> scope = scopes.peek();
         scope.put(name.lexeme, false);
     }
@@ -216,11 +206,10 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
     private void resolveLocal(Expr expr, Token name) {
         for (int i = scopes.size() - 1; i >= 0; i--) {
-          if (scopes.get(i).containsKey(name.lexeme)) {
-            interpreter.resolve(expr, scopes.size() - 1 - i);
-            return;
-          }
+            if (scopes.get(i).containsKey(name.lexeme)) {
+                interpreter.resolve(expr, scopes.size() - 1 - i);
+                return;
+            }
         }
-      }
-
+    }
 }

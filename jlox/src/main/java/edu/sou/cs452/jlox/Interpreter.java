@@ -101,15 +101,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     */
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
-      evaluate(stmt.expression);
-      return null;
+        evaluate(stmt.expression);
+        return null;
     }
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-
-        
-        LoxFunction function = new LoxFunction(stmt, environment,
-                                           false);
+        LoxFunction function = new LoxFunction(stmt, environment,false);
         environment.define(stmt.name.lexeme, function);
         return null;
     }
@@ -119,11 +116,8 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     */
     @Override
     public Void visitIfStmt(Stmt.If stmt) {
-        if (isTruthy(evaluate(stmt.condition))) { 
-            execute(stmt.thenBranch);
-        } else if (stmt.elseBranch != null) {
-            execute(stmt.elseBranch);
-        }
+        if (isTruthy(evaluate(stmt.condition))) {  execute(stmt.thenBranch); } 
+        else if (stmt.elseBranch != null) { execute(stmt.elseBranch); }
         return null;
     }
     /** 
@@ -140,23 +134,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Void visitReturnStmt(Stmt.Return stmt) {
         Object value = null;
         if (stmt.value != null) value = evaluate(stmt.value);
-
         throw new Return(value);
-    }
-    @Override
-    public Object visitAssignExpr(Expr.Assign expr) {
-        Object value = evaluate(expr.value);
-        Integer distance = locals.get(expr);
-        if (distance != null) { environment.assignAt(distance, expr.name, value); } 
-        else { globals.assign(expr.name, value); }
-        environment.assign(expr.name, value);
-        return value;
     }
     @Override
     public Void visitVarStmt(Stmt.Var stmt) {
         Object value = null;
         if (stmt.initializer != null) { value = evaluate(stmt.initializer); }
-
         environment.define(stmt.name.lexeme, value);
         return null;
     }
@@ -174,6 +157,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object value = evaluate(expr.value);
         environment.assign(expr.name, value);
         return value;
+    }
+    @Override
+    public Object visitLoxListExpr(Expr.LoxList expr) {
+        List<Object> values = new ArrayList<>();
+        for (Expr value : expr.values) {
+            values.add(evaluate(value));
+        }
+        return values;
     }
     
     /** 
@@ -220,7 +211,6 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitCallExpr(Expr.Call expr) {
         Object callee = evaluate(expr.callee);
-
         List<Object> arguments = new ArrayList<>();
         for (Expr argument : expr.arguments) {  arguments.add(evaluate(argument)); }
         if (!(callee instanceof LoxCallable)) {
@@ -312,31 +302,35 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitLogicalExpr(Expr.Logical expr) {
       Object left = evaluate(expr.left);
-  
         if (expr.operator.type == TokenType.OR) {
             if (isTruthy(left)) return left;
         } else {
             if (!isTruthy(left)) return left;
         }
-  
         return evaluate(expr.right);
     }
     @Override
     public Object visitSetExpr(Expr.Set expr) {
       Object object = evaluate(expr.object);
-  
-      if (!(object instanceof LoxInstance)) { 
-        throw new RuntimeError(expr.name,
-                               "Only instances have fields.");
-      }
-      
+      if (!(object instanceof LoxInstance)) {  throw new RuntimeError(expr.name,"Only instances have fields."); }
       Object value = evaluate(expr.value);
       ((LoxInstance)object).set(expr.name, value);
       return value;
     }
     @Override
-  public Object visitThisExpr(Expr.This expr) {
-    return lookUpVariable(expr.keyword, expr);
-  }
+    public Object visitThisExpr(Expr.This expr) { return lookUpVariable(expr.keyword, expr); }
 
+    @Override
+    public Object visitGetExpr(Expr.ListGet expr) {
+        Object object = evaluate(expr.identifier);
+        if (!(object instanceof List)) {
+            throw new RuntimeError(expr.identifier, "Only lists have indexes");
+        }
+        Object index = evaluate(expr.index);
+        if(!(index instanceof Double)) { throw new RuntimeError(expr.bracket, "Index must be a number"); }
+        Integer idx = ((Double) index).intValue();
+        List<Object> lst = (List<Object>) object;
+        if (idx < 0 || idx >= lst.size()) { throw new RuntimeError(expr.bracket, "Index out of bounds"); }
+        return ((List<Object>) object).get(idx);
+    }
 }

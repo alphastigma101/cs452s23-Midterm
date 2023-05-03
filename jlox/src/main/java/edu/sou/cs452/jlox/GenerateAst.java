@@ -1,5 +1,4 @@
 package edu.sou.cs452.jlox;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -19,8 +18,10 @@ public class GenerateAst {
         defineAst(outputDir, "Expr", Arrays.asList(
             "Assign   : Token name, Expr value",
             "Binary   : Expr left, Token operator, Expr right",
+            "LoxList : List<Expr> elements",
             "Call     : Expr callee, Token paren, List<Expr> arguments",
             "Get      : Expr object, Token name",
+            "ListGet  : Expr identifier, Token bracket, Expr index",
             "Grouping : Expr expression",
             "Literal  : Object value",
             "Logical  : Expr left, Token operator, Expr right",

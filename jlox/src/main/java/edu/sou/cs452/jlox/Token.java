@@ -3,7 +3,7 @@ package edu.sou.cs452.jlox;
 class Token {
     final TokenType type;
     final String lexeme;
-    final AbstractValue literal;
+    final Object literal;
     final int line; 
     /** 
      * @param type is a TokenType 
@@ -12,7 +12,7 @@ class Token {
      * @param line is a integer type
      * @return None
     */
-    Token(TokenType type, String lexeme, AbstractValue literal, int line) {
+    Token(TokenType type, String lexeme, Object literal, int line) {
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
