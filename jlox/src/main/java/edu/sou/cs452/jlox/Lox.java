@@ -8,8 +8,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
-
-    private static class Abs extends AbstractInterpreter { }
     private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
