@@ -1,7 +1,22 @@
 package edu.sou.cs452.jlox;
 import java.util.List;
+import java.util.ArrayList;
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment environment = new Environment();
+    final Environment globals = new Environment();
+    private Environment environment = globals;
+    
+    Interpreter() {
+        globals.define("clock", new LoxCallable() {
+          @Override
+          public int arity() { return 0; }
+    
+          @Override
+          public Object call(Interpreter interpreter, List<Object> arguments) { return (double)System.currentTimeMillis() / 1000.0; }
+    
+          @Override
+          public String toString() { return "<native fn>"; }
+        });
+    }
     /** 
      * ...
      * @param expression is List type
@@ -40,6 +55,30 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     */
     private void execute(Stmt stmt) { stmt.accept(this); }
     /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
+    void executeBlock(List<Stmt> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } 
+        finally { this.environment = previous; }
+    }
+    /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+      executeBlock(stmt.statements, new Environment(environment));
+      return null;
+    }
+    /** 
      * @param stmt is a Stmt.Expression type 
      * @return Returns null iif... 
     */
@@ -49,6 +88,19 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       return null;
     }
     /** 
+     * @param stmt is a Stmt.Expression type 
+     * @return Returns null iif... 
+    */
+    @Override
+    public Void visitIfStmt(Stmt.If stmt) {
+        if (isTruthy(evaluate(stmt.condition))) { 
+            execute(stmt.thenBranch);
+        } else if (stmt.elseBranch != null) {
+            execute(stmt.elseBranch);
+        }
+        return null;
+    }
+    /** 
      * @param stmt is a Stmt.Print type 
      * @return Returns null iif....
     */
@@ -56,6 +108,25 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Void visitPrintStmt(Stmt.Print stmt) {
         Object value = evaluate(stmt.expression);
         System.out.println(stringify(value));
+        return null;
+    }
+    @Override
+    public Object visitAssignExpr(Expr.Assign expr) {
+        Object value = evaluate(expr.value);
+        environment.assign(expr.name, value);
+        return value;
+    }
+    @Override
+    public Void visitVarStmt(Stmt.Var stmt) {
+        Object value = null;
+        if (stmt.initializer != null) { value = evaluate(stmt.initializer); }
+
+        environment.define(stmt.name.lexeme, value);
+        return null;
+    }
+    @Override
+    public Void visitWhileStmt(Stmt.While stmt) {
+        while (isTruthy(evaluate(stmt.condition))) { execute(stmt.body); }
         return null;
     }
     /** 
@@ -110,6 +181,22 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
         return null;
     }
+    @Override
+    public Object visitCallExpr(Expr.Call expr) {
+        Object callee = evaluate(expr.callee);
+
+        List<Object> arguments = new ArrayList<>();
+        for (Expr argument : expr.arguments) {  arguments.add(evaluate(argument)); }
+        if (!(callee instanceof LoxCallable)) {
+            throw new RuntimeError(expr.paren,"Can only call functions and classes.");
+        }
+        LoxCallable function = (LoxCallable)callee;
+        if (arguments.size() != function.arity()) {
+            throw new RuntimeError(expr.paren, "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
+        }
+        return function.call(this, arguments);
+    }
+    
     /** 
      * @param Expr.Binary 
      * @return null if it is not reachable 
@@ -120,6 +207,20 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
      * @param object is a Object Type
      * @return return false if object is null otherwise, cast object into a boolean and return true
     */
+    @Override
+    public Object visitUnaryExpr(Expr.Unary expr) {
+        Object right = evaluate(expr.right);
+        switch (expr.operator.type) {
+            case MINUS:
+                return -(double)right;
+            default:
+                break;
+        }
+        // Unreachable.
+        return null;
+    }
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) { return environment.get(expr.name); }
     private boolean isTruthy(Object object) {
         if (object == null) return false;
         if (object instanceof Boolean) return (boolean)object;
@@ -163,4 +264,18 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     */
     @Override
     public Object visitLiteralExpr(Expr.Literal expr) { return expr.value; }
+
+    @Override
+    public Object visitLogicalExpr(Expr.Logical expr) {
+      Object left = evaluate(expr.left);
+  
+        if (expr.operator.type == TokenType.OR) {
+            if (isTruthy(left)) return left;
+        } else {
+            if (!isTruthy(left)) return left;
+        }
+  
+        return evaluate(expr.right);
+    }
+
 }

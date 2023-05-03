@@ -6,27 +6,41 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GenerateAst {
-  public static void main(String[] args) throws IOException {
-    if (args.length != 1) {
-      System.err.println("Usage: generate_ast <output directory>");
-      System.exit(64);
+    /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
+    public static void main(String[] args) throws IOException {
+        if (args.length != 1) {
+            System.err.println("Usage: generate_ast <output directory>");
+            System.exit(64);
+        }
+        String outputDir = args[0];
+        defineAst(outputDir, "Expr", Arrays.asList(
+            "Assign   : Token name, Expr value",
+            "Binary   : Expr left, Token operator, Expr right",
+            "Grouping : Expr expression",
+            "Literal  : Object value",
+            "Logical  : Expr left, Token operator, Expr right",
+            "Unary    : Token operator, Expr right"
+        ));
+        defineAst(outputDir, "Stmt", Arrays.asList(
+        "Expression : Expr expression",
+        "Function   : Token name, List<Token> params," +
+                    " List<Stmt> body",
+        "Print      : Expr expression",
+        "Var        : Token name, Expr initializer",
+        "While      : Expr condition, Stmt body"
+        
+        ));
     }
-    String outputDir = args[0];
-    defineAst(outputDir, "Expr", Arrays.asList(
-        "Binary   : Expr left, Token operator, Expr right",
-        "Grouping : Expr expression",
-        "Literal  : Object value",
-        "Unary    : Token operator, Expr right"
-    ));
-    defineAst(outputDir, "Stmt", Arrays.asList(
-      "Expression : Expr expression",
-      "Print      : Expr expression"
-    ));
-  }
+    /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
     private static void defineAst(String outputDir, String baseName, List<String> types) throws IOException {
         String path = outputDir + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
-
         writer.println("package edu.sou.cs452.jlox;");
         writer.println();
         writer.println("import java.util.List;");
@@ -43,14 +57,15 @@ public class GenerateAst {
         writer.println();
         //writer.println("  abstract <R> R accept(Visitor<R> visitor);");
         writer.println("  public abstract <R> R accept(Visitor<R> visitor);");
-
-
         writer.println("}");
         writer.close();
     }
+    /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
     private static void defineVisitor( PrintWriter writer, String baseName, List<String> types) {
         writer.println("  interface Visitor<R> {");
-
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
             writer.println("    R visit" + typeName + baseName + "(" +
@@ -59,6 +74,10 @@ public class GenerateAst {
 
         writer.println("  }");
     }
+    /** 
+     * @param stmt is a Stmt type
+     * @return stmt.accecpt(this)
+    */
     private static void defineType( PrintWriter writer, String baseName, String className, String fieldList) {
         writer.println("  static class " + className + " extends " +
         baseName + " {");
@@ -78,9 +97,7 @@ public class GenerateAst {
         
         // Fields.
         writer.println();
-        for (String field : fields) {
-            writer.println("    final " + field + ";");
-        }
+        for (String field : fields) { writer.println("    final " + field + ";"); }
         writer.println("    @Override");
         writer.println("    public <R> R accept(Visitor<R> visitor) {");
         writer.println("      return visitor.visit" + className + baseName + "(this);");
