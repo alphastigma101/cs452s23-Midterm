@@ -159,14 +159,16 @@ class Scanner {
      * @return Returns to the general function
     */
     private void addToken(TokenType type) { addToken(type, null); }
-    /**
+    
+}
+
+/**
      * This function addToken() is the general function  
      * @param type is a TokenType 
      * @param literal is a AbstractValue
      * @return None
     */
-    private void addToken(TokenType type, AbstractValue literal) {
+    /*private void addToken(TokenType type, AbstractValue literal) {
         String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
-    }
-}
+    }*/
