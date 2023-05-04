@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-
+import edu.sou.cs452.jlox.input;
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
@@ -19,9 +19,12 @@ public class Lox {
         if ( args.length > 1 ) {
             System.out.println("Usage: jlox [script]");
             System.exit(64); 
-        } 
+        }
         else if ( args.length == 1 ) { runFile(args[0]); } 
-        else { runPrompt(); }
+        else { 
+            input("Hello World!");
+            runPrompt(); 
+        }
         runPrompt();
     }
     /** 
