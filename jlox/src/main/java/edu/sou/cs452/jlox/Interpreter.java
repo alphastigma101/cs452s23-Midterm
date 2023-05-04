@@ -57,6 +57,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
      * @return stmt.accecpt(this)
     */
     private void execute(Stmt stmt) { stmt.accept(this); }
+    void resolve(Expr expr, int depth) { locals.put(expr, depth); }
     /** 
      * @param stmt is a Stmt type
      * @return stmt.accecpt(this)
@@ -222,7 +223,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
         return function.call(this, arguments);
     }
-    
+    @Override
+    public Object visitGetExpr(Expr.Get expr) {
+        Object object = evaluate(expr.object);
+        if (object instanceof LoxInstance) { return ((LoxInstance) object).get(expr.name); }
+        throw new RuntimeError(expr.name, "Only instances have properties.");
+    }
     /** 
      * @param Expr.Binary 
      * @return null if it is not reachable 
@@ -262,6 +268,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         if (a == null) return false;
     
         return a.equals(b);
+    }
+    private boolean isTruthy(Object object) {
+        if (object == null) return false;
+        if (object instanceof Boolean) return (boolean)object;
+        return true;
     }
     /** 
      * @param expr is a Expr.Grouping type 
@@ -314,16 +325,19 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Object visitThisExpr(Expr.This expr) { return lookUpVariable(expr.keyword, expr); }
 
     @Override
-    public Object visitGetExpr(Expr.ListGet expr) {
+    public Object visitListGetExpr(Expr.ListGet expr) {
         Object object = evaluate(expr.identifier);
         if (!(object instanceof List)) {
-            throw new RuntimeError(expr.identifier, "Only lists have indexes");
+            Token identifier = (Token) expr.identifier.accept(this);
+            throw new RuntimeError(identifier, "Only lists have indexes");
         }
         Object index = evaluate(expr.index);
         if(!(index instanceof Double)) { throw new RuntimeError(expr.bracket, "Index must be a number"); }
         Integer idx = ((Double) index).intValue();
         List<Object> lst = (List<Object>) object;
-        if (idx < 0 || idx >= lst.size()) { throw new RuntimeError(expr.bracket, "Index out of bounds"); }
+        if (idx < 0 || idx >= lst.size()) { 
+            throw new RuntimeError(expr.bracket, "Index out of bounds"); 
+        }
         return ((List<Object>) object).get(idx);
     }
 }

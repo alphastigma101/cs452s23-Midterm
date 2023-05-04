@@ -270,7 +270,7 @@ class Parser {
             else if (match(TokenType.LEFT_BRACKET)) {
                 Expr index = expression();
                 Token bracket = consume(TokenType.RIGHT_BRACKET, "Expect ']' after index");
-                expr = new Expr.ListGet(expr, index, bracket);
+                expr = new Expr.ListGet(expr, bracket, index);
             }
             else { break; }
         }
