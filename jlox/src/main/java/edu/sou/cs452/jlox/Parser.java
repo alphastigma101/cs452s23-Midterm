@@ -1,7 +1,8 @@
 package edu.sou.cs452.jlox;
 import java.util.List;
 import java.util.Arrays;
-import static edu.sou.cs452.Lab5.TokenType.*;
+import java.util.ArrayList;
+import static edu.sou.cs452.jlox.TokenType.*;
 class Parser {
     private static class ParseError extends RuntimeException {}
     private final List<Token> tokens;
@@ -269,7 +270,7 @@ class Parser {
             else if (match(TokenType.LEFT_BRACKET)) {
                 Expr index = expression();
                 Token bracket = consume(TokenType.RIGHT_BRACKET, "Expect ']' after index");
-                expr = new Expr.Get(expr, index, bracket);
+                expr = new Expr.ListGet(expr, index, bracket);
             }
             else { break; }
         }
@@ -364,4 +365,25 @@ class Parser {
      * @return Returns the previous element in the list 
     */
     private Token previous() { return tokens.get(current - 1); }
+    private void synchronize() {
+        advance();
+        while (!isAtEnd()) {
+            if (previous().type == SEMICOLON) return;
+            switch (peek().type) {
+                case CLASS:
+                case FUN:
+                case VAR:
+                case FOR:
+                case IF:
+                case WHILE:
+                case PRINT:
+                case RETURN:
+                    return;
+                default:
+                    break;
+            }
+    
+            advance();
+        }
+    }
 }

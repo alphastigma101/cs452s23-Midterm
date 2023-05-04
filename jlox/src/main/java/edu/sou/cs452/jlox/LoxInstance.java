@@ -1,4 +1,6 @@
 package edu.sou.cs452.jlox;
+import java.util.HashMap;
+import java.util.Map;
 
 class LoxInstance {
   private LoxClass klass;

@@ -16,6 +16,7 @@ abstract class Expr {
     R visitSetExpr(Set expr);
     R visitThisExpr(This expr);
     R visitUnaryExpr(Unary expr);
+    R visitVariableExpr(Variable expr);
   }
   static class Assign extends Expr {
     Assign(Token name, Expr value) {
@@ -185,6 +186,18 @@ abstract class Expr {
     @Override
     public <R> R accept(Visitor<R> visitor) {
       return visitor.visitUnaryExpr(this);
+    }
+  }
+  static class Variable extends Expr {
+    Variable(Token name) {
+
+      this.name = name;
+    }
+
+    final Token name;
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitVariableExpr(this);
     }
   }
 

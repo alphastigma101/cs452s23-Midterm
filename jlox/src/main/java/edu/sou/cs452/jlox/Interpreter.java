@@ -161,7 +161,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitLoxListExpr(Expr.LoxList expr) {
         List<Object> values = new ArrayList<>();
-        for (Expr value : expr.values) {
+        for (Expr value : expr.elements) {
             values.add(evaluate(value));
         }
         return values;
@@ -252,13 +252,6 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
         // Unreachable.
         return null;
-    }
-    @Override
-    public Object visitVariableExpr(Expr.Variable expr) { return environment.get(expr.name); }
-    private boolean isTruthy(Object object) {
-        if (object == null) return false;
-        if (object instanceof Boolean) return (boolean)object;
-        return true;
     }
     /** 
      * @param expr is a Expr.Grouping type 

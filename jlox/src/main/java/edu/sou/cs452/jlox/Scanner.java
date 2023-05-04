@@ -1,7 +1,7 @@
 package edu.sou.cs452.jlox;
 import java.util.ArrayList;
 import java.util.List;
-import static edu.sou.cs452.Lab5.TokenType.*;
+import static edu.sou.cs452.jlox.TokenType.*;
 class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
@@ -92,7 +92,7 @@ class Scanner {
     
         // Trim the surrounding quotes.
         String value = source.substring(start + 1, current - 1);
-        addToken(STRING, value);
+        //addToken(STRING, (Object)value);
     }
     /**
      * This function peekNext() it peeks at the next character
@@ -153,22 +153,14 @@ class Scanner {
     */
     private char advance() { return source.charAt(current++); }
     /**
-     * This function addToken() is a helper function 
+     * This function addToken() puts the tokens by calling addToken
      * @param type is a TokenType 
      * @param null
-     * @return Returns to the general function
-    */
-    private void addToken(TokenType type) { addToken(type, null); }
-    
-}
-
-/**
-     * This function addToken() is the general function  
-     * @param type is a TokenType 
-     * @param literal is a AbstractValue
      * @return None
     */
-    /*private void addToken(TokenType type, AbstractValue literal) {
+    private void addToken(TokenType type) { 
         String text = source.substring(start, current);
-        tokens.add(new Token(type, text, literal, line));
-    }*/
+        tokens.add(new Token(type, text, null, line)); 
+    }
+    
+}
