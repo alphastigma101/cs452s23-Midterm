@@ -3,7 +3,7 @@
 - If you're using another linux distro, then you need to figure out how to install maven on it 
 - Execute this command: **mvn archetype:generate -DgroupId=edu.sou.cs452.jlox -DartifactId=jlox -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false**
 - Then you should be able to execute the code by issuing this: **java -cp target/Lab5-1.0-SNAPSHOT.jar edu.sou.cs452.Lab5.Lox**
-
+- Run this command to compile and run the program: **java -cp target/jlox-1.0-SNAPSHOT.jar edu.sou.cs452.jlox.GenerateAst**
 We can compile the program by executing mvn package within the Lab5 directory.
 
 We can run the program with java -cp target/Lab5-1.0-SNAPSHOT.jar edu.sou.cs452.Lab5.Lox
