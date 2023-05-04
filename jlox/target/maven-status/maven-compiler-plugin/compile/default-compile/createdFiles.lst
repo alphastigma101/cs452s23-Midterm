@@ -16,8 +16,8 @@ edu/sou/cs452/jlox/GenerateAst.class
 edu/sou/cs452/jlox/Expr$Call.class
 edu/sou/cs452/jlox/Interpreter$2.class
 edu/sou/cs452/jlox/Expr$Get.class
-edu/sou/cs452/jlox/Expr$Assign.class
 edu/sou/cs452/jlox/Expr$Set.class
+edu/sou/cs452/jlox/Expr$Assign.class
 edu/sou/cs452/jlox/Interpreter$1.class
 edu/sou/cs452/jlox/Stmt$If.class
 edu/sou/cs452/jlox/Expr$Visitor.class
@@ -29,13 +29,13 @@ edu/sou/cs452/jlox/Stmt.class
 edu/sou/cs452/jlox/LoxFunction.class
 edu/sou/cs452/jlox/Expr.class
 edu/sou/cs452/jlox/RuntimeError.class
-edu/sou/cs452/jlox/Expr$Logical.class
 edu/sou/cs452/jlox/Stmt$Function.class
+edu/sou/cs452/jlox/Expr$Logical.class
 edu/sou/cs452/jlox/Token.class
 edu/sou/cs452/jlox/Expr$LoxList.class
 edu/sou/cs452/jlox/Stmt$While.class
-edu/sou/cs452/jlox/Resolver.class
 edu/sou/cs452/jlox/TokenType.class
+edu/sou/cs452/jlox/Resolver.class
 edu/sou/cs452/jlox/Scanner.class
 edu/sou/cs452/jlox/Stmt$Expression.class
 edu/sou/cs452/jlox/Interpreter.class
