@@ -2,6 +2,8 @@ package edu.sou.cs452.jlox;
 import java.util.ArrayList;
 import java.util.List;
 import static edu.sou.cs452.jlox.TokenType.*;
+
+// Somehow you can make this Scanner function like the function input() in python... Figure out how to do it
 class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
@@ -45,10 +47,18 @@ class Scanner {
               break;
             default: 
                 if (isDigit(c)) { number(); }
-                //else if (isAlpha(c)) { identifier(); }
-                //Lox.error(line, "Unexpected character.");
+                else if (isAlpha(c)) { identifier(); }
+                Lox.error(line, "Unexpected character.");
                 break;
         }
+    }
+    private void identifier() {
+        while (isAlphaNumeric(peek())) advance();
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if ( type == null ) type = IDENTIFIER;
+        addToken(type);
+        addToken(IDENTIFIER);
     }
     /**
      * The function peek() peeks at the current character in the string
@@ -102,6 +112,12 @@ class Scanner {
     private char peekNext() {
         if ( current + 1 >= source.length() ) return '\0';
         return source.charAt(current + 1);
+    }
+    private boolean isAlpha(char c) {
+        return ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) || c == '_';
+    }
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
     }
     /**
      * This function is match()
