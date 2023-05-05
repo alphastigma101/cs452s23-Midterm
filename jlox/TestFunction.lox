@@ -1,3 +1,5 @@
 print("Enter Something");
 var x = input();
 print(x);
+var y = int(60.5);
+print(y);

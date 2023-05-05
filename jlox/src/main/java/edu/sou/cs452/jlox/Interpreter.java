@@ -23,7 +23,15 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       public String toString() { return "<native fn>"; }
     });
     globals.define("input", new Utils());
-    globals.define("int", new Utils());
+    globals.define("int", new Utils() {
+      @Override
+      public int arity() { return 1; }
+      @Override
+      public Object call(Interpreter interpreter, List<Object> arguments) {
+        if (arguments.get(0) instanceof String) { return Double.parseDouble((String) arguments.get(0)); }
+        return null;
+      }
+    });
   }
   /** 
     * @param stmt is a Stmt type
