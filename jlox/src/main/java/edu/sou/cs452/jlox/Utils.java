@@ -1,35 +1,18 @@
 package edu.sou.cs452.jlox;
-import java.io.InputStream;
-import java.util.Scanner;
-public class Utils {
-    public static void input(Object prompt) {
-        if (prompt instanceof InputStream) {
-            if (prompt instanceof String) {
-                Scanner scanner = new Scanner((String)prompt);
-                prompt = scanner.nextLine().trim();
-                System.out.print(prompt);
-                scanner.close();
-            }      
-            else if (prompt instanceof Double) {
-                System.out.print(prompt);
-            }
-            else if (prompt instanceof Integer) {
-                System.out.print(prompt);
-            }
-        }
-        else {
-            if (prompt instanceof String) {
-                Scanner scanner = new Scanner((String)prompt);
-                prompt = scanner.nextLine().trim();
-                System.out.print(prompt);
-                scanner.close();
-            }      
-            else if (prompt instanceof Double) {
-                System.out.print(prompt);
-            }
-            else if (prompt instanceof Integer) {
-                System.out.print(prompt);
-            }
-        }
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.List;
+
+public class Utils implements LoxCallable {
+    @Override
+    public int arity() { return 0; }
+    @Override
+    public Object call(Interpreter interpreter, List<Object> arguments) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        return reader.readLine();
     }
+    @Override
+    public String toString() { return "<native fn>"; }
+   
 }

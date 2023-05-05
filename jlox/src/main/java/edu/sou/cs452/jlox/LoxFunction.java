@@ -1,5 +1,6 @@
 package edu.sou.cs452.jlox;
 
+import java.io.IOException;
 import java.util.List;
 
 class LoxFunction implements LoxCallable {
@@ -22,7 +23,7 @@ class LoxFunction implements LoxCallable {
   @Override
   public int arity() { return declaration.params.size(); }
   @Override
-  public Object call(Interpreter interpreter, List<Object> arguments) {
+  public Object call(Interpreter interpreter, List<Object> arguments) throws IOException {
     Environment environment = new Environment(closure);
     for (int i = 0; i < declaration.params.size(); i++) { environment.define(declaration.params.get(i).lexeme, arguments.get(i)); }
     interpreter.executeBlock(declaration.body, environment);

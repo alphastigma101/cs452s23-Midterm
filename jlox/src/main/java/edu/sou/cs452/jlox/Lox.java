@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import static edu.sou.cs452.jlox.Utils.input;
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
@@ -22,8 +21,6 @@ public class Lox {
         } 
         else if ( args.length == 1 ) { runFile(args[0]); } 
         else { 
-            input("Hello World!");
-            input(System.in);
             runPrompt(); 
         }
         runPrompt();
@@ -58,8 +55,9 @@ public class Lox {
     /** 
      * @param Expr.Binary 
      * @return null if it is not reachable 
+     * @throws IOException
     */
-    private static void run(String source) {
+    private static void run(String source) throws IOException {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
