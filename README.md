@@ -206,7 +206,7 @@ Every instanceof check for LoxInstance objects should be rewritten to be a check
 "5" * "6"
 ```
 
-# Test suites for JVM:
+# Creating Test suites for JVM:
 **Using jupiter to make test cases**
   - https://stackoverflow.com/questions/45175418/import-junit-jupiter-api-not-found
   - https://junit.org/junit5/docs/current/user-guide/
@@ -214,3 +214,6 @@ Every instanceof check for LoxInstance objects should be rewritten to be a check
   - https://reflectoring.io/junit5/
 **Using junit to make test cases**
 - https://www.javatpoint.com/junit-test-case-example-in-java
+
+# What my test case does:
+- The test case you provided OutBounds_Test does not perform static bounds checking directly, but it uses a subclass of StaticBoundChecking called ListBoundsChecker which performs the static bounds checking for the given list at compile-time. The Interval object in the test case uses the ListBoundsChecker to check the bounds of the list, and then an IndexOutOfBoundsException is thrown if an attempt is made to access an out-of-bounds index. So, in a way, the test case indirectly performs static bounds checking.
