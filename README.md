@@ -16,6 +16,23 @@
 - **Prototypes**: Implement prototypal inheritance in JLox. Remove the distinction between objects and classes, and treat a class definition simply as a object in the environment with the name of the class that contains no fields, i.e. the initializer has not run. Add a .proto keyword for set expressions that dynamically update the superclass of an object. The superclass can be either another object or a class itself.
 - **Static bounds checking**: Create an abstract interpretation-based bounds checker for lists. This checker should be able to detect and report potential out-of-bounds access to list elements at **compile time**, *helping to prevent runtime errors*. It should be sound with respect to the safety of the program, **meaning that it should never report that a program is safe that might produce an out-of-bounds error at runtime. It should be complete enough to allow useful programs to be run without reporting an egregious number false positives, meaning that it should not report that a program is unsafe when it is actually safe.**
 
+# Static analysis of array bounds checking
+- Source: **https://www.usenix.org/legacy/publications/library/proceedings/sec02/full_papers/lhee/lhee_html/node10.html**
+- is a technique that detects possible buffer overflow in the vulnerable C library functions. A string buffer is modeled as a pair of integer ranges (lower bound, upper bound) for its allocated size and its current length. A set of integer constraints is predefined for a set of string operations (e.g. character array declaration, vulnerable C library functions and assignment statements involving them). Using those integer constraint, the technique analyzes the source code by checking each string buffer to see whether its inferred allocated size is at least as large as its inferred maximum length. **But it is not only limited to c language.**
+- uses semantic comments, called annotations, provided by programmers to detect possible buffer overflow. For example, annotations for strcpy() contain an assertion that the destination buffer has been allocated to hold at least as many characters as are readable in the source buffer. This technique protects any annotated functions whereas the integer range analysis only protects C library functions.
+
+- Generally, a pure compile-time analysis like the above can produce many false alarms due to the lack of run time information. For example, gets() reads its input string from stdin so the size of the string is not known at compile time. **For such a case a warning is issued as a possible buffer overflow.** In fact, all the legitimate copy operations that accept their strings from unknown sources (such as a command line argument or an I/O channel) are flagged as possible buffer overflows (since they are indeed vulnerable). Without further action, those vulnerabilities are identified but still open to attack. 
+
+- Source: **https://stackoverflow.com/questions/12924533/java-static-methods-variables-resolved-during-compile-time-loaded-during-run-ti**
+- Resolving a method/variable means deciding exactly which method/variable is called. which there is a java file called **Resolver.java**. 
+- **For instance methods for example this is done at runtime, which results in the ability of a subclass to override a superclass's methods (polymorphism).**
+- **Static methods however cannot be overridden and are resolved at compile time.**
+
+
+
+# Summary Static analysis of array bounds checking
+- create a file or files that only have static declarations. 
+
 - Prototypes
   - The goal of this part of the midterm is implement a form of prototypal inheritance in JLox. In our version of prototypes,
 
@@ -153,3 +170,44 @@ Every instanceof check for LoxInstance objects should be rewritten to be a check
   if (expr.getName().getType() == TokenType.PROTO) { ((LoxClass) object).setSuperklass((LoxClass) value); } 
   else { ((LoxClass) object).set(expr.getName(), value); }
 ```
+
+# Java Types:
+- Source: https://web.mit.edu/6.005/www/fa15/classes/01-static-checking/
+- The most important semantic difference between the Python and Java code above is the declaration of the variable n, which specifies its type: int. A type is a set of values, along with operations that can be performed on those values.
+
+**Java has several primitive types, among them:**
+
+  *  int (for integers like 5 and -200, but limited to the range ± 2^31, or roughly ± 2 billion)
+  *  long (for larger integers up to ± 2^63)
+  *  boolean (for true or false)
+  *  double (for floating-point numbers, which represent a subset of the real numbers)
+  *  char (for single characters like 'A' and '$')
+**Java also has Wrapper Types or you can say Object Types which the first letter is capitalized:**
+  * **Double**:
+  * **Integer**:
+  * **String**:
+  * **Char**: 
+  * **Bool**:  
+  * **String**: represents a sequence of characters, like a Python string.
+  * **BigInteger**: represents an integer of arbitrary size, so it acts like a Python number.
+
+**Operations are functions that take inputs and produce outputs (and sometimes change the values themselves). The syntax for operations varies, but we still think of them as functions no matter how they’re written. Here are three different syntaxes for an operation in Python or Java:**
+  * As an infix, prefix, or postfix operator. For example, a + b invokes the operation + : int × int → int.
+  * As a method of an object. For example, bigint1.add(bigint2) calls the operation add: BigInteger × BigInteger → BigInteger.
+  * As a function. For example, Math.sin(theta) calls the operation sin: double → double. Here, Math is not an object. It’s the class that contains the sin function.
+  * Some operations are overloaded in the sense that the same operation name is used for different types. The arithmetic operators +, -, *, / are heavily overloaded for the numeric primitive types in Java. Methods can also be overloaded. Most programming languages have some degree of overloading.
+
+
+# Static Typing
+- Java is a statically-typed language. **The types of all variables are known at compile time (before the program runs), and the compiler can therefore deduce the types of all expressions as well.** If a and b are declared as ints, then the compiler concludes that a+b is also an int. The Eclipse environment does this while you’re writing the code, in fact, so you find out about many errors while you’re still typing.
+
+- **Static typing** *is a particular kind of static checking, which means checking for bugs at compile time.* **Bugs are the bane of programming.** Many of the ideas in this course are aimed at eliminating bugs from your code, and static checking is the first idea that we’ve seen for this. Static typing prevents a large class of bugs from infecting your program: to be precise, bugs caused by applying an operation to the wrong types of arguments. If you write a broken line of code like:
+```
+"5" * "6"
+```
+
+# Test suites for JVM:
+
+- https://stackoverflow.com/questions/45175418/import-junit-jupiter-api-not-found
+- https://junit.org/junit5/docs/current/user-guide/
+- https://stackoverflow.com/questions/72467220/junit-assertions-assertthrows-works-but-expectedexception-doesnt
