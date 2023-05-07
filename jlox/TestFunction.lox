@@ -27,6 +27,16 @@ print(array);
 
 // Appending and indexing the array
 print(array.append(12));
+
+// Accessing the array at a certain index
 print(array.at(1));
+
+// Popping the element out of the array 
 print(array.pop(1));
+
+// Insert an element in a certain position
+print(array.insert(1, 45));
+
+// Nested lists 
+var array = [[]];
 print(array);

@@ -21,7 +21,7 @@ enum TokenType {
   PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
 
   // Methods 
-  APPEND,AT,POP,
+  APPEND,AT,POP,INSERT,
 
   EOF
 }

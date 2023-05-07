@@ -37,6 +37,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     globals.define("append", new Append());
     globals.define("at", new At());
     globals.define("pop", new Pop());
+    globals.define("insert", new Insert());
   }
   /** 
     * @param stmt is a Stmt type
@@ -194,8 +195,8 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     return value;
   }
   /** 
-     * @param stmt is a Stmt type
-     * @return stmt.accecpt(this)
+     * @param expr is a Expr.LoxList type
+     * @return values is getting populated with evaluate(value)
   */
   @Override
   public Object visitLoxListExpr(Expr.LoxList expr) throws IOException {
@@ -274,12 +275,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   @Override
   public Object visitGetExpr(Expr.Get expr) throws IOException {
     Object object = evaluate(expr.object);
-    
     if (object instanceof LoxClass) { return ((LoxClass) object).get(expr.name); }
     else if (object instanceof List) {
       if (expr.name.type == TokenType.APPEND) { return new Append((ArrayList<Object>)object); }
       else if (expr.name.type == TokenType.AT) { return new At((ArrayList<Object>)object); }
       else if (expr.name.type == TokenType.POP) { return new Pop((ArrayList<Object>)object); }
+      else if (expr.name.type == TokenType.INSERT) { return new Insert((ArrayList<Object>)object); }
     }
     throw new RuntimeError(expr.name, "Only instances have properties.");
   }

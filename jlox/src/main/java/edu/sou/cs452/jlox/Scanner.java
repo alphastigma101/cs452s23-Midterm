@@ -13,6 +13,7 @@ class Scanner {
     keywords.put("append", APPEND);
     keywords.put("at", AT);
     keywords.put("pop", POP);
+    keywords.put("insert", INSERT);
     keywords.put("and", AND);
     keywords.put("class", CLASS);
     keywords.put("else", ELSE);
