@@ -12,5 +12,4 @@ interface LoxCallable {
         * @return stmt.accecpt(this)
     */
     Object call(Interpreter interpreter, List<Object> arguments) throws IOException;
-  
 }

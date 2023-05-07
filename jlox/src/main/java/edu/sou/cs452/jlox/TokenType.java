@@ -10,14 +10,18 @@ enum TokenType {
   EQUAL, EQUAL_EQUAL,
   GREATER, GREATER_EQUAL,
   LESS, LESS_EQUAL,
-  // 
+  // List tokens
   LEFT_BRACKET, RIGHT_BRACKET,
   // Literals.
   IDENTIFIER, STRING, NUMBER,
-
+  //  Proto Token
+  PROTO,
   // Keywords.
   AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
   PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+
+  // Methods 
+  APPEND,AT,POP,
 
   EOF
 }

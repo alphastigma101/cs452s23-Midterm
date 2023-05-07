@@ -69,7 +69,7 @@ public class Lox {
         interpreter.interpret(statements);
 
         // For now, just print the tokens.
-        for (Token token : tokens) { System.out.println(token); }
+        //for (Token token : tokens) { System.out.println(token); }
     }
     /** 
      * @param Expr.Binary 

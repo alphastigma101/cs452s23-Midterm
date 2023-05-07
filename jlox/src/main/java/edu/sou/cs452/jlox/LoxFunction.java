@@ -3,20 +3,23 @@ package edu.sou.cs452.jlox;
 import java.io.IOException;
 import java.util.List;
 
+import edu.sou.cs452.jlox.Stmt.Function;
+
 class LoxFunction implements LoxCallable {
   private final Stmt.Function declaration;
   private final Environment closure;
   private final boolean isInitializer;
+  public Function get;
 
   LoxFunction(Stmt.Function declaration, Environment closure, boolean isInitializer) {
     this.isInitializer = isInitializer;
     this.closure = closure;
     this.declaration = declaration; 
   }
-  LoxFunction bind(LoxInstance instance) {
+  LoxFunction bind(LoxClass instance) {
     Environment environment = new Environment(closure);
     environment.define("this", instance);
-    return new LoxFunction(declaration, environment,isInitializer);
+    return new LoxFunction(declaration, environment, isInitializer);
   }
   @Override
   public String toString() { return "<fn " + declaration.name.lexeme + ">"; }

@@ -1,19 +1,18 @@
 package edu.sou.cs452.jlox;
-
 import java.util.HashMap;
 import java.util.Map;
-
 class Environment {
     private final Map<String, Object> values = new HashMap<>();
     final Environment enclosing;
     /** 
-     * @param stmt is a Stmt type
-     * @return stmt.accecpt(this)
+     * This is the default constructor for environment
+     * @param None 
+     * @return None
     */
     Environment() { enclosing = null; }
     /** 
-     * @param stmt is a Stmt type
-     * @return stmt.accecpt(this)
+     * @param ecnlosing is a Environment type
+     * @return None
     */
     Environment(Environment enclosing) { this.enclosing = enclosing; }
     /** 

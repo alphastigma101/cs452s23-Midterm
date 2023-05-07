@@ -72,6 +72,7 @@ class Parser {
     if (match(RETURN)) return returnStatement();
     if (match(WHILE)) return whileStatement();
     if (match(LEFT_BRACE)) return new Stmt.Block(block());
+    //if (match(LEFT_BRACKET, RIGHT_BRACKET)) return new Expr.ListGet(null, null, null);
     return expressionStatement();
   }
   /** 
@@ -296,6 +297,25 @@ class Parser {
     * @param stmt is a Stmt type
     * @return stmt.accecpt(this)
   */
+  private Expr list() {
+    List<Expr> elements = new ArrayList<>();
+    if (current == 1) {
+      consume(TokenType.NUMBER, "Expect '[' before the list.");
+    }
+    if (!check(TokenType.RIGHT_BRACKET)) {
+      do {
+        elements.add(expression()); 
+      } 
+      while(match(TokenType.COMMA) || match(TokenType.NUMBER));
+    }
+    if (check(TokenType.RIGHT_BRACKET) == true) { consume(TokenType.RIGHT_BRACKET, "Expect ']' after list" );}
+    return new Expr.LoxList(elements);
+    
+  }
+  /** 
+    * @param stmt is a Stmt type
+    * @return stmt.accecpt(this)
+  */
   private Expr finishCall(Expr callee) {
     List<Expr> arguments = new ArrayList<>();
     if (!check(RIGHT_PAREN)) {
@@ -314,12 +334,32 @@ class Parser {
   private Expr call() {
     Expr expr = primary();
     while (true) {
-      if (match(LEFT_PAREN)) {
-        expr = finishCall(expr);
-      } else if (match(DOT)) {
-        Token name = consume(IDENTIFIER,"Expect property name after '.'.");
-        expr = new Expr.Get(expr, name);
-      } else { break; }
+      if (match(LEFT_PAREN)) { expr = finishCall(expr); }
+      else if (match(DOT)) {
+        Token name;
+        if (check(IDENTIFIER)) {
+          name = consume(IDENTIFIER, "Expect property name after '.'.");
+          expr = new Expr.Get(expr, name);
+        } 
+        else if (check(PROTO)) {
+          name = consume(PROTO, "Expect proto after '.'.");
+          expr = new Expr.Get(expr, name);
+        }
+        else if (check(APPEND)) {
+          name = consume(APPEND, "");
+          expr = new Expr.Get(expr, name);
+        }
+        else if (check(AT)) {
+          name = consume(AT, "Expected something to happen..");
+          expr = new Expr.Get(expr, name);
+        }
+        else if (check(POP)) {
+          name = consume(POP, "Expected something to happen...");
+          expr = new Expr.Get(expr, name);
+        }
+        else { throw error(peek(), "Expect property or proto after dot."); }
+      } 
+      else { break; }
     }
     return expr;
   }
@@ -345,6 +385,9 @@ class Parser {
       Expr expr = expression();
       consume(RIGHT_PAREN, "Expect ')' after expression.");
       return new Expr.Grouping(expr);
+    }
+    if(match(LEFT_BRACKET,RIGHT_BRACKET,COMMA,NUMBER)) {
+      return list();
     }
     throw error(peek(), "Expect expression.");
   }
@@ -426,6 +469,8 @@ class Parser {
         case PRINT:
         case RETURN:
           return;
+        default:
+          break;
       }
       advance();
     }

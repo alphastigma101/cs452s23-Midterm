@@ -1,5 +1,32 @@
-print("Enter Something");
-var x = input();
-print(x);
-var y = int(60.5);
-print(y);
+// Testing the input() function 
+print("Enter Something:");
+var user = input();
+print(user);
+
+// Testing the int() function
+var double = int(60.5);
+print(double);
+var intger = int(123);
+print(intger);
+
+// ProtoType Testing
+class Cow {
+    init() { }
+    voiceset(x) { this.voice = x; }
+    speak() { print(this.voice); }
+}
+var dude = Cow();
+dude.voiceset("Moo!");
+var cow = Cow();
+cow.proto = dude;
+cow.speak();
+
+// Testing the arrays 
+var array = [1,2,3,4];
+print(array);
+
+// Appending and indexing the array
+print(array.append(12));
+print(array.at(1));
+print(array.pop(1));
+print(array);

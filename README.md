@@ -1,12 +1,21 @@
 # cs452s23-Midterm
 - You need to install maven. On Ubuntu it is **sudo apt-get install maven**
 - If you're using another linux distro, then you need to figure out how to install maven on it 
-- Execute this command: **mvn archetype:generate -DgroupId=edu.sou.cs452.jlox -DartifactId=jlox -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false**
-- Then you should be able to execute the code by issuing this: **java -cp target/Lab5-1.0-SNAPSHOT.jar edu.sou.cs452.Lab5.Lox**
-- Run this command to compile and run the program: **java -cp target/jlox-1.0-SNAPSHOT.jar edu.sou.cs452.jlox.GenerateAst**
-We can compile the program by executing mvn package within the Lab5 directory.
+- Execute this command to create a **virtual enivornment (JVM)**: **mvn archetype:generate -DgroupId=edu.sou.cs452.jlox -DartifactId=jlox -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false**
+- Then you should be able to execute the code by issuing this because Lox has a main declared as static and anything with a main will be compiled: **java -cp target/jlox-1.0-SNAPSHOT.jar edu.sou.cs452.jlox.Lox**
+- Run this command to compile and run the program. It will generate the Stmt.java and the Expr.java: **java -cp target/jlox-1.0-SNAPSHOT.jar edu.sou.cs452.jlox.GenerateAst**
 
-We can run the program with java -cp target/Lab5-1.0-SNAPSHOT.jar edu.sou.cs452.Lab5.Lox
+
+# The Objectives to accomplish for this midterm:
+- Create the file called TestFunction.lox. 
+- Review the mechanics of how to use .lox, you can use **var x = input()**
+- The main goal of this project is to create functions for the lox language using java. You can test your .lox implementation by doing this: **java -cp target/jlox-1.0-SNAPSHOT.jar edu.sou.cs452.jlox.Lox TestFunction.lox**
+-  **User Input**: Implement functionality that allows tLox programs to accept input from standard input. One idea is to mimic the Python built-in function input.
+- **Type conversion**: Implement a way of converting strings to numeric values. One idea is to mimic the built-in Python function int.
+- **Lists**: Add support for array-like lists in the Lox language, including list creation, element retrieval, and modification. Lists should be able to store any valid Lox data type, including other lists, allowing for nested lists. Implement basic list manipulation functions such as adding, removing, and accessing elements at a specific index.
+- **Prototypes**: Implement prototypal inheritance in JLox. Remove the distinction between objects and classes, and treat a class definition simply as a object in the environment with the name of the class that contains no fields, i.e. the initializer has not run. Add a .proto keyword for set expressions that dynamically update the superclass of an object. The superclass can be either another object or a class itself.
+- **Static bounds checking**: Create an abstract interpretation-based bounds checker for lists. This checker should be able to detect and report potential out-of-bounds access to list elements at compile time, helping to prevent runtime errors. It should be sound with respect to the safety of the program, meaning that it should never report that a program is safe that might produce an out-of-bounds error at runtime. It should be complete enough to allow useful programs to be run without reporting an egregious number false positives, meaning that it should not report that a program is unsafe when it is actually safe.
+
 - Prototypes
   - The goal of this part of the midterm is implement a form of prototypal inheritance in JLox. In our version of prototypes,
 

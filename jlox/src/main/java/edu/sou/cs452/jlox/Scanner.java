@@ -9,21 +9,25 @@ class Scanner {
   private static final Map<String, TokenType> keywords;
   static {
     keywords = new HashMap<>();
-    keywords.put("and",    AND);
-    keywords.put("class",  CLASS);
-    keywords.put("else",   ELSE);
-    keywords.put("false",  FALSE);
-    keywords.put("for",    FOR);
-    keywords.put("fun",    FUN);
-    keywords.put("if",     IF);
-    keywords.put("nil",    NIL);
-    keywords.put("or",     OR);
+    keywords.put("proto", PROTO);
+    keywords.put("append", APPEND);
+    keywords.put("at", AT);
+    keywords.put("pop", POP);
+    keywords.put("and", AND);
+    keywords.put("class", CLASS);
+    keywords.put("else", ELSE);
+    keywords.put("false", FALSE);
+    keywords.put("for", FOR);
+    keywords.put("fun", FUN);
+    keywords.put("if", IF);
+    keywords.put("nil", NIL);
+    keywords.put("or", OR);
     keywords.put("return", RETURN);
-    keywords.put("super",  SUPER);
-    keywords.put("this",   THIS);
-    keywords.put("true",   TRUE);
-    keywords.put("var",    VAR);
-    keywords.put("while",  WHILE);
+    keywords.put("super", SUPER);
+    keywords.put("this", THIS);
+    keywords.put("true", TRUE);
+    keywords.put("var", VAR);
+    keywords.put("while", WHILE);
   }
   private final String source;
   private final List<Token> tokens = new ArrayList<>();
@@ -59,24 +63,18 @@ class Scanner {
       case ')': addToken(RIGHT_PAREN); break;
       case '{': addToken(LEFT_BRACE); break;
       case '}': addToken(RIGHT_BRACE); break;
+      case '[': addToken(LEFT_BRACKET); break;
+      case ']': addToken(RIGHT_BRACKET); break;
       case ',': addToken(COMMA); break;
       case '.': addToken(DOT); break;
       case '-': addToken(MINUS); break;
       case '+': addToken(PLUS); break;
       case ';': addToken(SEMICOLON); break;
       case '*': addToken(STAR); break; // [slash]
-      case '!':
-        addToken(match('=') ? BANG_EQUAL : BANG);
-        break;
-      case '=':
-        addToken(match('=') ? EQUAL_EQUAL : EQUAL);
-        break;
-      case '<':
-        addToken(match('=') ? LESS_EQUAL : LESS);
-        break;
-      case '>':
-        addToken(match('=') ? GREATER_EQUAL : GREATER);
-        break;
+      case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
+      case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
+      case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
+      case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
       case '/':
         if (match('/')) {
           // A comment goes until the end of the line.
@@ -101,8 +99,9 @@ class Scanner {
     }
   }
   /** 
-    * @param stmt is a Stmt type
-    * @return stmt.accecpt(this)
+    * @param None 
+    * @return None
+    * If scanTokens sees a character, it will keep iterating through the string that was passed from the console until it doesn't see any more characters
   */
   private void identifier() {
     while (isAlphaNumeric(peek())) advance();
