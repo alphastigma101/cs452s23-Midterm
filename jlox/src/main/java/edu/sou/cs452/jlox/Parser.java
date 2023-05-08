@@ -358,8 +358,20 @@ class Parser {
           expr = new Expr.Get(expr, name);
         }
         else if (check(INSERT)) {
-          name = consume(INSERT, "Exptexted something to happen...");
+          name = consume(INSERT, "Expected something to happen...");
           expr =  new Expr.Get(expr, name);
+        }
+        else if (check(ADDFRONT)) {
+          name = consume(ADDFRONT, "Expected something to happen....");
+          expr = new Expr.Get(expr, name);
+        }
+        else if (check(ADDMIDDLE)) {
+          name = consume(ADDMIDDLE, "Expected something to happen...");
+          expr = new Expr.Get(expr, name);
+        }
+        else if (check(CLEAR)) {
+          name = consume(CLEAR, "Expected something to happen....");
+          expr = new Expr.Get(expr, name);
         }
         else { throw error(peek(), "Expect property or proto after dot."); }
       } 

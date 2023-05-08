@@ -14,6 +14,9 @@ class Scanner {
     keywords.put("at", AT);
     keywords.put("pop", POP);
     keywords.put("insert", INSERT);
+    keywords.put("addfront", ADDFRONT);
+    keywords.put("addmiddle", ADDMIDDLE);
+    keywords.put("clear", CLEAR);
     keywords.put("and", AND);
     keywords.put("class", CLASS);
     keywords.put("else", ELSE);

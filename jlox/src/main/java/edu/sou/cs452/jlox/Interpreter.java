@@ -10,8 +10,9 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   private final Map<Expr, Integer> locals = new HashMap<>();
   Map<String, LoxFunction> methods = new HashMap<>();
   /** 
-    * @param stmt is a Stmt type
-    * @return stmt.accecpt(this)
+    * @param None
+    * @return None
+    * This is the default constructor for Interpreter. This is where the user can use methods or functions
   */
   Interpreter() {
     globals.define("print", new LoxPrintFunction());
@@ -38,10 +39,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     globals.define("at", new At());
     globals.define("pop", new Pop());
     globals.define("insert", new Insert());
+    globals.define("addfront", new AddFront());
+    globals.define("addmiddle", new AddMiddle());
+    globals.define("clear", new Clear());
   }
   /** 
-    * @param stmt is a Stmt type
-    * @return stmt.accecpt(this)
+    * calls in the execute() function
+    * @param statements is a List Stmt type
+    * @return None
   */
   void interpret(List<Stmt> statements) throws IOException {
     try {
@@ -50,7 +55,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     catch (RuntimeError error) { Lox.runtimeError(error); }
   }
   /** 
-    * @param stmt is a Stmt type
+    * @param expr is a Expr type
     * @return stmt.accecpt(this)
   */
   private Object evaluate(Expr expr) throws IOException { return expr.accept(this); }
@@ -60,8 +65,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   */
   private void execute(Stmt stmt) throws IOException { stmt.accept(this); }
   /** 
-    * @param stmt is a Stmt type
-    * @return stmt.accecpt(this)
+    * @param expr is a Expr type
+    * @param depth is a int type
+    * @return None
+    * Executes locals.put(expr,depth)
   */
   void resolve(Expr expr, int depth) { locals.put(expr, depth); }
   /** 
@@ -269,8 +276,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     return function.call(this, arguments);
   }
   /** 
-     * @param stmt is a Stmt type
-     * @return stmt.accecpt(this)
+    * @param expr is a Expr.Get type
+    * @return throws an error if the variable is trying to use a method
+    * This is where the magic happens. If you have a certain type, all you need to do is check what type it is and create another else if branch
+    * and add code that deals with it. ArrayList is a class. It is why I added it here
   */
   @Override
   public Object visitGetExpr(Expr.Get expr) throws IOException {
@@ -281,6 +290,9 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       else if (expr.name.type == TokenType.AT) { return new At((ArrayList<Object>)object); }
       else if (expr.name.type == TokenType.POP) { return new Pop((ArrayList<Object>)object); }
       else if (expr.name.type == TokenType.INSERT) { return new Insert((ArrayList<Object>)object); }
+      else if (expr.name.type == TokenType.ADDFRONT) { return new AddFront((ArrayList<Object>)object); }
+      else if (expr.name.type == TokenType.ADDMIDDLE) { return new AddMiddle((ArrayList<Object>)object); }
+      else if (expr.name.type == TokenType.CLEAR) { return new Clear((ArrayList<Object>)object); }
     }
     throw new RuntimeError(expr.name, "Only instances have properties.");
   }

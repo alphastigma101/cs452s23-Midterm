@@ -37,6 +37,22 @@ print(array.pop(1));
 // Insert an element in a certain position
 print(array.insert(1, 45));
 
+// Insert an element in the forStatement
+print(array.addfront(59));
+
+// Add an element in the middle of the array
+print(array.addmiddle(90));
+print(array.addmiddle(100));
+print(array.addmiddle(800));
+
+// Making a backup of the array
+var arr = array;
+
+// Now clear out array
+print(arr.clear());
+
+
+
 // Nested lists 
 var array = [[]];
 print(array);
