@@ -27,7 +27,7 @@
 - Resolving a method/variable means deciding exactly which method/variable is called. which there is a java file called **Resolver.java**. 
 - **For instance methods for example this is done at runtime, which results in the ability of a subclass to override a superclass's methods (polymorphism).**
 - **Static methods however cannot be overridden and are resolved at compile time.**
-
+- Use this command to execute the static bound checker: **mvn exec:java -Dexec.mainClass=edu.sou.cs452.jlox.Arrays**
 
 
 # Summary Static analysis of array bounds checking

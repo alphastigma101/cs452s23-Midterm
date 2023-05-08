@@ -2,8 +2,11 @@ package edu.sou.cs452.jlox;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-abstract class AbstractProcessor {
-    static class ListBoundsChecker extends AbstractProcessor {
+/*import javax.annotation.processing.*;
+import javax.lang.model.element.*;
+import javax.tools.Diagnostic;*/
+abstract class StaticBoundProcessor  {
+    static class ListBoundsChecker extends StaticBoundProcessor {
         static class Interval extends ListBoundsChecker {
             protected int lower;
             protected int upper;
