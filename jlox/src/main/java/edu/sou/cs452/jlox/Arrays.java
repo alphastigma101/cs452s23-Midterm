@@ -11,7 +11,7 @@ public class Arrays {
             arr.add(i, val);
         } 
         ListBoundsChecker.Interval interval = new ListBoundsChecker.Interval(0, (arr.size() - 1));
-        boolean isInBounds = ListBoundsChecker.isIndexInBounds(arr,12);
+        @Checker boolean isInBounds = ListBoundsChecker.isIndexInBounds(arr,12);
         System.out.println("Not in bounds!: " + isInBounds);
     }
     

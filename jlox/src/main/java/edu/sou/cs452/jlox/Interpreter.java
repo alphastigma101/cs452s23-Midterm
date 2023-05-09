@@ -217,7 +217,6 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     * @return stmt.accecpt(this)
   */
   @Override
-  @Checker
   public Object visitBinaryExpr(Expr.Binary expr) throws IOException {
     Object left = evaluate(expr.left);
     Object right = evaluate(expr.right); // [left]
@@ -261,7 +260,6 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     * @return stmt.accecpt(this)
   */
   @Override
-  @Checker
   public Object visitCallExpr(Expr.Call expr) throws IOException {
     Object callee = evaluate(expr.callee);
 
