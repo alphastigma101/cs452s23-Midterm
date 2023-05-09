@@ -20,7 +20,6 @@ public class StaticBoundProcessor extends AbstractProcessor {
         static class Interval extends ListBoundsChecker {
             protected int lower;
             protected int upper;
-            @Checker
             public Interval(int lower, int upper) {
                 this.lower = lower;
                 this.upper = upper;
@@ -36,16 +35,13 @@ public class StaticBoundProcessor extends AbstractProcessor {
                 int newUpper = Math.min(this.upper, other.upper);
                 return new Interval(newLower, newUpper);
             }
-            @Checker
             public String toString() {
                 return "[" + lower + ", " + upper + "]";
             }
         }
         static class ListDomain extends ListBoundsChecker {
             public Set<Interval> intervals;
-            @Checker
             public ListDomain() { this.intervals = new HashSet<>(); }
-            @Checker
             public void addInterval(Interval interval) { intervals.add(interval); }
             @Checker
             public ListDomain intersect(ListDomain other) {

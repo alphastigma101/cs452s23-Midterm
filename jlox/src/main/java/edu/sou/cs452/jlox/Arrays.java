@@ -10,7 +10,7 @@ public class Arrays {
             int val = i * 2;
             arr.add(i, val);
         } 
-        ListBoundsChecker.Interval interval = new ListBoundsChecker.Interval(0, (arr.size() - 1));
+        @Checker ListBoundsChecker.Interval interval = new ListBoundsChecker.Interval(0, (arr.size() - 1));
         @Checker boolean isInBounds = ListBoundsChecker.isIndexInBounds(arr,12);
         System.out.println("Not in bounds!: " + isInBounds);
     }
