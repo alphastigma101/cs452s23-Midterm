@@ -1,9 +1,8 @@
-/*package edu.sou.cs452.jlox;
-import static edu.sou.cs452.jlox.StaticBoundProcessor.ListBoundsChecker.Interval;
+package edu.sou.cs452.jlox;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.ARRAY_ACCESS)
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD})
 public @interface Checker {
-    Interval.contains(int val) default true;
-}*/
+    Class<? extends StaticBoundProcessor> value() default StaticBoundProcessor.ListBoundsChecker.class;
+}

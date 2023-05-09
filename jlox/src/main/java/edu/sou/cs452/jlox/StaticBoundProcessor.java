@@ -2,10 +2,17 @@ package edu.sou.cs452.jlox;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-/*import javax.annotation.processing.*;
+import javax.annotation.processing.*;
 import javax.lang.model.element.*;
-import javax.tools.Diagnostic;*/
-abstract class StaticBoundProcessor  {
+//import javax.tools.Diagnostic;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeKind;
+@SupportedAnnotationTypes("edu.sou.cs452.jlox.Checker")
+public class StaticBoundProcessor extends AbstractProcessor {
+    protected ArrayList<Object> list = new ArrayList<>();
+    protected int index = 0;
     static class ListBoundsChecker extends StaticBoundProcessor {
         static class Interval extends ListBoundsChecker {
             protected int lower;
@@ -83,5 +90,35 @@ abstract class StaticBoundProcessor  {
             ListDomain domain = getDomain(list);
             return domain.contains(index);
         }
+        @Override
+        public Set<String> getSupportedAnnotationTypes() {
+            // Return a set of annotation types that this processor supports.
+            // In this case, the processor supports the "Checker" annotation type.
+            return Set.of(Checker.class.getName());
+        }
     }
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(Checker.class)) {
+            if (element.getKind() == ElementKind.METHOD) {
+                ExecutableElement method = (ExecutableElement) element;
+                for (VariableElement variable : method.getParameters()) {
+                    if (variable.asType().getKind() == TypeKind.ARRAY) {
+                        list = new ArrayList<>();
+                        list.add(new Object());
+                        ListBoundsChecker.isIndexInBounds(list, index);
+                    }
+                }
+            } 
+            else if (element.getKind() == ElementKind.FIELD) {
+                VariableElement field = (VariableElement) element;
+                if (field.asType().getKind() == TypeKind.ARRAY) {
+                    list = new ArrayList<>();
+                    list.add(new Object());
+                    ListBoundsChecker.isIndexInBounds(list, index);
+                }
+            }
+        }
+        return true;
+    }    
 }

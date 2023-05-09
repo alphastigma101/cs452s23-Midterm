@@ -1,10 +1,10 @@
 package edu.sou.cs452.jlox;
-import edu.sou.cs452.jlox.StaticBoundProcessor.ListBoundsChecker;
-import edu.sou.cs452.jlox.StaticBoundProcessor.ListBoundsChecker.ListDomain;
+import static edu.sou.cs452.jlox.StaticBoundProcessor.ListBoundsChecker;
 import java.util.ArrayList;
 
 public class Arrays {
-    public static void main(String[] args) {
+   public static void main(String[] args) {
+        @Checker
         ArrayList<Object> arr = new ArrayList<>();
         for (int i = 0; i < 10; i ++) {
             int val = i * 2;
