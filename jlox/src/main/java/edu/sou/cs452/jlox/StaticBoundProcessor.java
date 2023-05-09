@@ -1,6 +1,7 @@
 package edu.sou.cs452.jlox;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.*;
 import javax.lang.model.element.*;
@@ -8,7 +9,11 @@ import javax.lang.model.element.*;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementFilter;
+
 @SupportedAnnotationTypes("edu.sou.cs452.jlox.Checker")
 public class StaticBoundProcessor extends AbstractProcessor {
     protected ArrayList<Object> list = new ArrayList<>();
@@ -17,6 +22,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
         static class Interval extends ListBoundsChecker {
             protected int lower;
             protected int upper;
+            @Checker
             public Interval(int lower, int upper) {
                 this.lower = lower;
                 this.upper = upper;
@@ -25,21 +31,23 @@ public class StaticBoundProcessor extends AbstractProcessor {
             public boolean contains(int index) {
                 if (index >= lower && index <= upper) { return index >= lower && index <= upper; }
                 throw new IndexOutOfBoundsException("Index is out of bounds!");
-            }   
+            }
+            @Checker
             public Interval intersect(Interval other) {
                 int newLower = Math.max(this.lower, other.lower);
                 int newUpper = Math.min(this.upper, other.upper);
                 return new Interval(newLower, newUpper);
             }
+            @Checker
             public String toString() {
                 return "[" + lower + ", " + upper + "]";
             }
         }
         static class ListDomain extends ListBoundsChecker {
             public Set<Interval> intervals;
-
+            @Checker
             public ListDomain() { this.intervals = new HashSet<>(); }
-
+            @Checker
             public void addInterval(Interval interval) { intervals.add(interval); }
             @Checker
             public ListDomain intersect(ListDomain other) {
@@ -98,6 +106,9 @@ public class StaticBoundProcessor extends AbstractProcessor {
             return Set.of(Checker.class.getName());
         }
     }
+    /**
+     * Process does everything. It is what lets out the warning that the user is trying to access out of bounds!
+     */
     @Override
     @Checker
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -105,23 +116,65 @@ public class StaticBoundProcessor extends AbstractProcessor {
             if (element.getKind() == ElementKind.METHOD) {
                 ExecutableElement method = (ExecutableElement) element;
                 for (VariableElement variable : method.getParameters()) {
-                    // Something isn't right here I am willing to bet 
                     if (variable.asType().getKind() == TypeKind.ARRAY) {
-                        list = new ArrayList<>();
-                        list.add(new Object());
-                        ListBoundsChecker.isIndexInBounds(list, index);
+                        TypeMirror arrayType = variable.asType();
+                        Element enclosingElement = variable.getEnclosingElement();
+                        if (enclosingElement instanceof ExecutableElement) {
+                            // Parameter is defined in a method
+                            ExecutableElement executableElement = (ExecutableElement) enclosingElement;
+                            for (VariableElement param : executableElement.getParameters()) {
+                                if (variable.equals(param)) {
+                                    // Found the matching parameter
+                                    ArrayType array = (ArrayType) arrayType;
+                                    ListBoundsChecker.isIndexInBounds((ArrayList<Object>)array, index);
+                                    break;
+                                }
+                            }
+                        } else if (enclosingElement instanceof TypeElement) {
+                            // Parameter is defined in a constructor or initializer
+                            TypeElement typeElement = (TypeElement) enclosingElement;
+                            for (ExecutableElement constructor : ElementFilter.constructorsIn(typeElement.getEnclosedElements())) {
+                                for (VariableElement param : constructor.getParameters()) {
+                                    if (variable.equals(param)) {
+                                        // Found the matching parameter
+                                        ArrayType array = (ArrayType) arrayType;
+                                        ListBoundsChecker.isIndexInBounds((ArrayList<Object>)array, index);
+                                        break;
+                                    }
+                                }
+                            }
+                            for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+                                if (variable.equals(field)) {
+                                    // Found the matching field
+                                    ArrayType array = (ArrayType) arrayType;
+                                    ListBoundsChecker.isIndexInBounds((ArrayList<Object>)array, index);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             } 
             else if (element.getKind() == ElementKind.FIELD) {
                 VariableElement field = (VariableElement) element;
                 if (field.asType().getKind() == TypeKind.ARRAY) {
-                    list = new ArrayList<>();
-                    list.add(new Object());
-                    ListBoundsChecker.isIndexInBounds(list, index);
+                    TypeMirror arrayType = field.asType();
+                    Element enclosingElement = field.getEnclosingElement();
+                    // Field is defined in a class
+                    for (Element enclosedElement : enclosingElement.getEnclosedElements()) {
+                        if (enclosedElement.getKind() == ElementKind.FIELD) {
+                            VariableElement enclosedField = (VariableElement) enclosedElement;
+                            if (field.equals(enclosedField)) {
+                                // Found the matching field
+                                ArrayType array = (ArrayType) arrayType;
+                                ListBoundsChecker.isIndexInBounds((ArrayList<Object>)array, index);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
         return true;
-    }    
+    }
 }
