@@ -27,8 +27,10 @@
 - Resolving a method/variable means deciding exactly which method/variable is called. which there is a java file called **Resolver.java**. 
 - **For instance methods for example this is done at runtime, which results in the ability of a subclass to override a superclass's methods (polymorphism).**
 - **Static methods however cannot be overridden and are resolved at compile time.**
-- Use this command to execute the static bound checker: **mvn exec:java -Dexec.mainClass=edu.sou.cs452.jlox.Arrays**
-
+- To execute code seperately you can do this: **mvn exec:java -Dexec.mainClass=edu.sou.cs452.jlox.Arrays**
+- Tried with this command: **mvn clean compile -Dmaven.compiler.processor=edu.sou.cs452.jlox.StaticBoundProcessor -Dmaven.compiler.arguments="-verbose"** After installing the processor plugin and tried installing the lint into my polm.xml file which lint does not work anymore
+- To compile each file seperately: **mvn compile -Dmaven.compiler.include=edu.sou.cs452.jlox.Arrays clean**
+- Using the linter: **mvn clean compile -Dmaven.compiler.processor=edu.sou.cs452.jlox.Arrays -Dmaven.compiler.arguments="-verbose" -Xlint:check**
 
 # Summary Static analysis of array bounds checking
 - create a file or files that only have static declarations. 
