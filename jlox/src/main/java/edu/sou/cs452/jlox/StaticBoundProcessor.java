@@ -21,6 +21,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
                 this.lower = lower;
                 this.upper = upper;
             } 
+            @Checker
             public boolean contains(int index) {
                 if (index >= lower && index <= upper) { return index >= lower && index <= upper; }
                 throw new IndexOutOfBoundsException("Index is out of bounds!");
@@ -40,7 +41,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
             public ListDomain() { this.intervals = new HashSet<>(); }
 
             public void addInterval(Interval interval) { intervals.add(interval); }
-
+            @Checker
             public ListDomain intersect(ListDomain other) {
                 ListDomain result = new ListDomain();
                 for (Interval i1 : intervals) {
@@ -50,8 +51,8 @@ public class StaticBoundProcessor extends AbstractProcessor {
                     }
                 }
                 return result;
-            }
-
+            }   
+            @Checker
             public boolean contains(int index) {
                 for (Interval i : intervals) {
                     if (i.contains(index)) {
@@ -60,7 +61,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
                 }
                 return false;
             }
-            
+            @Checker
             public String toString() {
                 StringBuilder sb = new StringBuilder();
                 sb.append("{");
@@ -75,7 +76,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
                 return sb.toString();
             }
         }
-        
+        @Checker
         public static ListDomain getDomain(ArrayList<Object> list) {
             ListDomain domain = new ListDomain();
             if (list.size() == 0) {
@@ -85,7 +86,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
             domain.addInterval(new Interval(0, list.size() - 1));
             return domain;
         }
-    
+        @Checker
         public static boolean isIndexInBounds(ArrayList<Object> list, int index) {
             ListDomain domain = getDomain(list);
             return domain.contains(index);
@@ -103,6 +104,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
             if (element.getKind() == ElementKind.METHOD) {
                 ExecutableElement method = (ExecutableElement) element;
                 for (VariableElement variable : method.getParameters()) {
+                    // Something isn't right here I am willing to bet 
                     if (variable.asType().getKind() == TypeKind.ARRAY) {
                         list = new ArrayList<>();
                         list.add(new Object());
