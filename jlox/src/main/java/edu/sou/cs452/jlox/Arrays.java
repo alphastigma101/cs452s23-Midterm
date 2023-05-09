@@ -9,9 +9,9 @@ public class Arrays {
         for (int i = 0; i < 10; i ++) {
             int val = i * 2;
             arr.add(i, val);
-        }
+        } 
         @Checker ListBoundsChecker.Interval interval = new ListBoundsChecker.Interval(0, (arr.size() - 1));
-        @Checker boolean isInBounds = ListBoundsChecker.isIndexInBounds(arr, 12);
+        @Checker boolean isInBounds = ListBoundsChecker.isIndexInBounds(arr,12);
         System.out.println("Not in bounds!: " + isInBounds);
     }
     
