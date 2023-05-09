@@ -51,8 +51,6 @@ var arr = array;
 // Now clear out array
 print(arr.clear());
 arr.append(12);
-print(arr[0]);
-//print(arr.at(20));
 
 
 // Nested lists 

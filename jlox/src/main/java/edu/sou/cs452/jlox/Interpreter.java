@@ -206,6 +206,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
      * @return values is getting populated with evaluate(value)
   */
   @Override
+  @Checker
   public Object visitLoxListExpr(Expr.LoxList expr) throws IOException {
     List<Object> values = new ArrayList<>();
     for (Expr value : expr.elements) { values.add(evaluate(value)); }
@@ -216,6 +217,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     * @return stmt.accecpt(this)
   */
   @Override
+  @Checker
   public Object visitBinaryExpr(Expr.Binary expr) throws IOException {
     Object left = evaluate(expr.left);
     Object right = evaluate(expr.right); // [left]
@@ -259,6 +261,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     * @return stmt.accecpt(this)
   */
   @Override
+  @Checker
   public Object visitCallExpr(Expr.Call expr) throws IOException {
     Object callee = evaluate(expr.callee);
 
@@ -282,6 +285,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     * and add code that deals with it. ArrayList is a class. It is why I added it here
   */
   @Override
+  @Checker
   public Object visitGetExpr(Expr.Get expr) throws IOException {
     Object object = evaluate(expr.object);
     if (object instanceof LoxClass) { return ((LoxClass) object).get(expr.name); }
@@ -327,6 +331,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
      * @return stmt.accecpt(this)
   */
   @Override
+  @Checker
   public Object visitSetExpr(Expr.Set expr) throws IOException {
     Object object = evaluate(expr.object);
     
@@ -447,6 +452,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     * @return stmt.accecpt(this)
   */
   @Override
+  @Checker
   public Object visitListGetExpr(Expr.ListGet expr) throws IOException {
     Object object = evaluate(expr.identifier);
     if (!(object instanceof List)) {

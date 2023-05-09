@@ -24,7 +24,7 @@ class AddFront implements LoxCallable {
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
         int index = arr.size() - arr.size();
-        double Value = (double)arguments.get(0);
+        @Checker double Value = (double)arguments.get(0);
         arr.add(index, Value);
         return arr;
         

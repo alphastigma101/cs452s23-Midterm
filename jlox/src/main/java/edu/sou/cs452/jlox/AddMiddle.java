@@ -25,6 +25,7 @@ class AddMiddle implements LoxCallable {
     */
     @Override
     public int arity() { return 1;}
+    @Checker
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
         double NewValue = (double)arguments.get(0);

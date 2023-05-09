@@ -26,10 +26,64 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    <pluginManagement> <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
+        <plugin>
+	        <groupId>com.lewisd</groupId>
+	        <artifactId>lint-maven-plugin</artifactId>
+	        <version>0.0.8</version>
+	        <configuration>
+		        <failOnViolation>false</failOnViolation>
+		        <onlyRunRules>
+			        <rule>ExecutionId</rule>
+		        </onlyRunRules>
+	        	<xmlOutputFile>${project.build.directory}/maven-lint-result.xml</xmlOutputFile>
+	        </configuration>
+	        <executions>
+		      <execution>
+			      <id>pom-lint</id>
+			      <phase>validate</phase>
+			        <goals>
+				        <goal>check</goal>
+			        </goals>
+		        </execution>
+	        </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.2.2</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>...choose your version...</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+       <plugin>
+          <groupId>com.google.code.maven-config-processor-plugin</groupId>
+          <artifactId>config-processor-maven-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+            <specificProperties>src/assembly/qa.properties</specificProperties>
+            <transformations>
+              <transformation>
+                <input>src/main/resources/my-config.properties</input>
+                <output>processed-files/my-config.properties</output>
+                <config>src/assembly/qa/my-config-processing.xml</config>
+              </transformation>
+            </transformations>
+            </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -60,15 +114,15 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
         </plugin>
-        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
+          <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.7.1</version>
+          </plugin>
+          <plugin>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>3.0.0</version>
+          </plugin>
       </plugins>
     </pluginManagement>
   </build>
