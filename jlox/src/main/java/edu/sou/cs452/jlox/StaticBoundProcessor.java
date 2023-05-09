@@ -1,7 +1,6 @@
 package edu.sou.cs452.jlox;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.*;
 import javax.lang.model.element.*;
@@ -13,7 +12,6 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
-
 @SupportedAnnotationTypes("edu.sou.cs452.jlox.Checker")
 public class StaticBoundProcessor extends AbstractProcessor {
     protected ArrayList<Object> list = new ArrayList<>();
@@ -69,7 +67,6 @@ public class StaticBoundProcessor extends AbstractProcessor {
                 }
                 return false;
             }
-            @Checker
             public String toString() {
                 StringBuilder sb = new StringBuilder();
                 sb.append("{");
@@ -110,7 +107,6 @@ public class StaticBoundProcessor extends AbstractProcessor {
      * Process does everything. It is what lets out the warning that the user is trying to access out of bounds!
      */
     @Override
-    @Checker
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(Checker.class)) {
             if (element.getKind() == ElementKind.METHOD) {
