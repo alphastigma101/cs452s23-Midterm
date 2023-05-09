@@ -31,6 +31,7 @@ class Insert implements LoxCallable {
      * @return the modified array that the public constructor got from visitGetExpr function located in Interpreter.java
     */
     @Override
+    @Checker
     public Object call(Interpreter interpreter, List<Object> arguments) {
         d = (double)arguments.get(0);
         int index = d.intValue();

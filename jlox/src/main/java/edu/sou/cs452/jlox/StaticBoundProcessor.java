@@ -99,6 +99,7 @@ public class StaticBoundProcessor extends AbstractProcessor {
         }
     }
     @Override
+    @Checker
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(Checker.class)) {
             if (element.getKind() == ElementKind.METHOD) {
