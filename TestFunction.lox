@@ -1,0 +1,58 @@
+// Testing the input() function 
+print("Enter Something:");
+var user = input();
+print(user);
+
+// Testing the int() function
+var double = int(60.5);
+print(double);
+var intger = int(123);
+print(intger);
+
+// ProtoType Testing
+class Cow {
+    init() { }
+    voiceset(x) { this.voice = x; }
+    speak() { print(this.voice); }
+}
+var dude = Cow();
+dude.voiceset("Moo!");
+var cow = Cow();
+cow.proto = dude;
+cow.speak();
+
+// Testing the arrays 
+var array = [1,2,3,4];
+print(array);
+
+// Appending and indexing the array
+print(array.append(12));
+
+// Accessing the array at a certain index
+print(array.at(1));
+
+// Popping the element out of the array 
+print(array.pop(1));
+
+// Insert an element in a certain position
+print(array.insert(1, 45));
+
+// Insert an element in the forStatement
+print(array.addfront(59));
+
+// Add an element in the middle of the array
+print(array.addmiddle(90));
+print(array.addmiddle(100));
+print(array.addmiddle(800));
+
+// Making a backup of the array
+var arr = array;
+
+// Now clear out array
+print(arr.clear());
+arr.append(12);
+
+
+// Nested lists 
+var array = [[]];
+print(array);

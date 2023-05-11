@@ -122,7 +122,8 @@ public class StaticBoundProcessor extends AbstractProcessor {
                                     break;
                                 }
                             }
-                        } else if (enclosingElement instanceof TypeElement) {
+                        } 
+                        else if (enclosingElement instanceof TypeElement) {
                             // Parameter is defined in a constructor or initializer
                             TypeElement typeElement = (TypeElement) enclosingElement;
                             for (ExecutableElement constructor : ElementFilter.constructorsIn(typeElement.getEnclosedElements())) {
